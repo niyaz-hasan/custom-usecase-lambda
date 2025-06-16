@@ -25,7 +25,7 @@ module "cloudwatch_events" {
   source          = "./modules/eventbridge"
   name            = "unused-ebs-cleanup-rule"
 #  cron_expression = "cron(0 8 ? * MON-FRI *)" # 8 AM
-  cron_expression = "cron(0/3 * * * ? *)"   
+  cron_expression = "rate(24 hours)"   # This would trigger the event every 24 hours 
   lambda_arn      = module.lambda.this.arn
   lambda_name     = module.lambda.this.function_name
 }

@@ -1,2 +1,2 @@
-# custom-usecase-lambda
-using lambda to delete the unused volumes 
+# UC6-lambda-start-stop 
+Lambda to start and stop instance based on cron job 

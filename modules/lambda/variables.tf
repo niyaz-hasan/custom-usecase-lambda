@@ -25,12 +25,6 @@ variable "role_arn" {
   type        = string
 }
 
-variable "instance_ids" {
-  description = "Comma-separated EC2 instance IDs"
-  type        = string
+variable "environment_variables" {
 }
 
-variable "ec2_action" {
-  description = "Action to perform: start or stop"
-  type        = string
-}

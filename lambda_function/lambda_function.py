@@ -9,7 +9,7 @@ logger.setLevel(logging.INFO)
 # Initialize EC2 client
 ec2 = boto3.client('ec2')
 
-def handler(event, context):
+def lambda_handler(event, context):
     try:
         # Describe all volumes
         response = ec2.describe_volumes()

@@ -8,10 +8,7 @@ resource "aws_lambda_function" "this" {
   source_code_hash = filebase64sha256(var.lambda_zip)
 
   environment {
-    variables = {
-      INSTANCE_IDS = var.instance_ids
-      EC2_ACTION   = var.ec2_action
-    }
+    variables = var.environment_variables
   }
 }
 

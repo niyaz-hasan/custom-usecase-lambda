@@ -22,8 +22,8 @@ resource "aws_iam_policy" "lambda_policy" {
       {
         Effect = "Allow",
         Action = [
-          "ec2:StartInstances",
-          "ec2:StopInstances",
+          "ec2:DescribeVolumes",
+          "ec2:DeleteVolume",
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"

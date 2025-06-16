@@ -1,65 +1,42 @@
 module "iam" {
   source = "./modules/iam"
-  name   = "ec2_scheduler_lambda"
+  name   = "unused_ebs_lambda"
 }
 
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_file = "${path.module}/lambda_function/ec2_control.py"
-  output_path = "${path.module}/lambda_function/ec2_control.zip"
+  source_file = "${path.module}/lambda_function/lambda_function.py"
+  output_path = "${path.module}/lambda_function/lambda_function.zip"
 }
 
-module "lambda_stop" {
+
+
+module "lambda" {
   source         = "./modules/lambda"
   lambda_zip     = data.archive_file.lambda_zip.output_path
-  function_name  = "ec2-stop-lambda"
-  handler        = "ec2_control.lambda_handler"
+  function_name  = "unused-ebs-cleanup"
+  handler        = "lambda_function.lambda_handler"
   role_arn       = module.iam.role_arn
-  instance_ids   = var.ec2_instance_ids
-  ec2_action     = "stop"
+  environment_variables = var.lambda_environment_variables
 }
 
-module "lambda_start" {
-  source         = "./modules/lambda"
-  lambda_zip     = data.archive_file.lambda_zip.output_path
-  function_name  = "ec2-start-lambda"
-  handler        = "ec2_control.lambda_handler"
-  role_arn       = module.iam.role_arn
-  instance_ids   = var.ec2_instance_ids
-  ec2_action     = "start"
-}
 
-module "stop_schedule" {
+module "cloudwatch_events" {
   source          = "./modules/eventbridge"
-  name            = "stop-ec2-schedule"
-#  cron_expression = "cron(0 17 ? * MON-FRI *)" # 5 PM 
-  cron_expression = "cron(0/2 * * * ? *)"  
-  lambda_arn      = module.lambda_stop.this.arn
-  lambda_name     = module.lambda_stop.this.function_name
-}
-
-module "start_schedule" {
-  source          = "./modules/eventbridge"
-  name            = "start-ec2-schedule"
+  name            = "unused-ebs-cleanup-rule"
 #  cron_expression = "cron(0 8 ? * MON-FRI *)" # 8 AM
   cron_expression = "cron(0/3 * * * ? *)"   
-  lambda_arn      = module.lambda_start.this.arn
-  lambda_name     = module.lambda_start.this.function_name
+  lambda_arn      = module.lambda.this.arn
+  lambda_name     = module.lambda.this.function_name
 }
 
 
 output "start_lambda_function_name" {
-  value = module.lambda_start.this.function_name
+  value = module.lambda.this.function_name
 }
 
-output "stop_lambda_function_name" {
-  value = module.lambda_stop.this.function_name
+output "cloudwatch_events_name" {
+  value = module.cloudwatch_events.event_rule_name
 }
 
-output "start_event_rule" {
-  value = module.start_schedule.event_rule_name
-}
 
-output "stop_event_rule" {
-  value = module.stop_schedule.event_rule_name
-}

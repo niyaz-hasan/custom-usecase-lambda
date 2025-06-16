@@ -1,7 +1,8 @@
-variable "ec2_instance_ids" {
-  description = "Comma-separated list of EC2 instance IDs"
-  type        = string
-  default     = "i-02d143846751d6a81"
+variable "lambda_environment_variables" {
+  description = "Environment variables for the Lambda function"
+  default     = {
+    LOG_LEVEL = "INFO"
+  }
 }
 
 variable "aws_region" {
